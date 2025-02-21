@@ -106,7 +106,7 @@ func show_tune_page(data: Variant) -> void:
 	var data_folder = OS.get_user_data_dir()
 	tunepal.create_midi_file(data["notation"], data_folder + "/tunepal.abc", data_folder + "/tunepal.mid", 4, 0, 0, 0)
 
-	tunepal.create_svg_file(data["notation"], data_folder + "/tunepal.abc", data_folder + "/tunepal.svg")	
+	# tunepal.create_svg_file(data["notation"], data_folder + "/tunepal.abc", data_folder + "/tunepal.svg")	
 	var latest_file = get_highest_tunepal_file(data_folder)
 	var texture = load_texture_from_path(latest_file)
 	abc_score.texture = texture

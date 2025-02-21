@@ -1,4 +1,4 @@
-/*#include "transcription_engine.h"
+#include "transcription_engine.h"
 
 TranscriptionEngine::TranscriptionEngine() {
     basicPitch = std::make_unique<BasicPitch>();
@@ -19,4 +19,3 @@ void TranscriptionEngine::transcribeAudio(const float* audioData, int numSamples
 const std::vector<Notes::Event>& TranscriptionEngine::getNoteEvents() const {
     return basicPitch->getNoteEvents();
 }
-*/
