@@ -4,6 +4,11 @@ extends Control
 @onready var menu_button = $Container/container/menu_button
 @onready var menu = $Menu
 @onready var lable = $Container/container/label
+
+# import db button elements
+@onready var import_options_dialog = $import_options_dialog/ImportOptionsDialog
+@onready var download_button = $DownloadButton
+# @onready var download_button = $DownloadButton
 var title = ""
 
 # Swipe Animation Variables
@@ -18,17 +23,18 @@ var t = 0.0
 
 # Page selection Variables
 var pagenames = {
-				"record":{"node":"RecordPage","title":"Record"},
-				"keyword":{"node":"KeywordPage","title":"Search Tune"},
-				"randomtune":{"node":"RandomtunePage","title":"Random Tune"},
-				"usertunes":{"node":"UsertunesPage","title":"My Tunes"}, 
-				"importdb":{"node":"ImportDBPage","title":"Import Database"},
-				}
+	"record":{"node":"RecordPage","title":"Record"},
+	"keyword":{"node":"KeywordPage","title":"Search Tune"},
+	"randomtune":{"node":"RandomtunePage","title":"Random Tune"},
+	"usertunes":{"node":"UsertunesPage","title":"My Tunes"}, 
+	"importdb":{"node":"ImportDBPage","title":"Import Database"},
+}
 
 func _ready() -> void:
 	open_page("record")
 	OS.request_permissions()
 	# sqlite.connect("build_progress", _on_build_progress)
+	get_node("Menu/VBoxContainer/import_tunes_button").pressed.connect(_on_build_db_scene_button_pressed)
 	
 func update_title():
 	lable.text = title
@@ -102,8 +108,6 @@ func open_page(string):
 func _process(delta: float) -> void:
 	swipe_actions(delta)
 
-
-
 func _on_menu_button_pressed() -> void:
 	open_menu()
 	
@@ -137,6 +141,39 @@ func _on_about_scene_button_pressed() -> void:
 
 func _on_build_db_scene_button_pressed() -> void:
 	close_menu()
-	# sqlite is an auto loaded script
-	# loading_dialog.show()
-	sqlite._on_build_db_button_pressed()
+	
+	# Create a popup directly
+	var popup = PopupPanel.new()
+	popup.name = "SimpleImportDialog"
+	add_child(popup)
+	
+	var vbox = VBoxContainer.new()
+	vbox.custom_minimum_size = Vector2(300, 200)
+	popup.add_child(vbox)
+	
+	var title = Label.new()
+	title.text = "Select Import Method"
+	vbox.add_child(title)
+	
+	var btn_files = Button.new()
+	btn_files.text = "Import from files"
+	btn_files.pressed.connect(func(): download_button._on_build_db_button_pressed(); popup.hide())
+	vbox.add_child(btn_files)
+	
+	var btn_session = Button.new()
+	btn_session.text = "Import from thesession.org"
+	btn_session.pressed.connect(func(): download_button._on_download_button_pressed(); popup.hide())
+	vbox.add_child(btn_session)
+	
+	var btn_cancel = Button.new()
+	btn_cancel.text = "Cancel"
+	btn_cancel.pressed.connect(func(): popup.hide())
+	vbox.add_child(btn_cancel)
+	
+	popup.popup_centered()
+	
+func _on_import_from_files_selected():
+	download_button._on_build_db_button_pressed()
+
+func _on_import_from_session_selected():
+	download_button._on_download_button_pressed()
