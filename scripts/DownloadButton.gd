@@ -29,7 +29,10 @@ func _on_download_button_pressed():
 	status_label.text = "Downloading..."
 	
 	# Start the download process
-	var downloader = ABCDownloader.new()
+	var ABCDownloaderScript = load("res://scripts/ABCdownloader.gd")
+	var downloader = ABCDownloaderScript.new()
+	add_child(downloader)
+	await get_tree().process_frame
 	downloader.start_download()
 	var download_complete = false
 	# Wait for the download to complete 
